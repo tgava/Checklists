@@ -8,10 +8,11 @@
 
 import UIKit
 
-class ChecklistViewController: UITableViewController {
+class ChecklistViewController: UITableViewController, AddItemViewControllerDelegate {
     
     var items: [ChecklistItem]
-    
+   
+    /* No longer need this block
     @IBAction func addItem() {
     
         let newRowIndex = items.count
@@ -25,6 +26,7 @@ class ChecklistViewController: UITableViewController {
         let indexPaths = [indexPath]
         tableView.insertRows(at: indexPaths as [IndexPath], with: .automatic)
     }
+ */
     
     required init?(coder aDecoder: NSCoder) {
         
@@ -120,5 +122,27 @@ class ChecklistViewController: UITableViewController {
         }
     }
     
+    // Add implementation of Protol functions defined in AddItemViewController protocol
+    func addItemViewControllerDidCancel(controller: AddItemViewController) {
+        dismiss(animated: true, completion: nil)
+    }
     
+    func addItemViewController(controller: AddItemViewController, didFinishAddingItem item: ChecklistItem) {
+        
+        let newRowIndex = items.count
+        items.append(item)
+        
+        let indexPath = NSIndexPath(row: newRowIndex, section: 0)
+        let indexPaths = [indexPath]
+        tableView.insertRows(at: indexPaths as [IndexPath], with: .automatic)
+        
+        dismiss(animated: true, completion: nil)
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "AddItem" {
+            let navigationController = segue.destination as! UINavigationController
+            let controller = navigationController.topViewController as! AddItemViewController
+            controller.delegate = self
+        }
+    }
 }
